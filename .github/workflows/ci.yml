@@ -1,0 +1,33 @@
+# Standard CI - the deterministic half of Gate 3. Replace steps with your CMS adapter's CI profile.
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [develop, main]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+      - name: Lint
+        run: echo "replace with adapter lint (phpcs / npm run lint / dotnet format / mvn verify)"
+      - name: Unit tests
+        run: echo "replace with adapter unit tests"
+      - name: E2E + a11y
+        run: echo "npx playwright test (includes axe checks)"
+  deploy-qa:
+    needs: checks
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: qa
+    steps:
+      - run: echo "deploy to QA via your platform CLI"
+  deploy-prod:
+    needs: checks
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production   # configure required reviewers = Gate 5
+    steps:
+      - run: echo "deploy to production via your platform CLI"

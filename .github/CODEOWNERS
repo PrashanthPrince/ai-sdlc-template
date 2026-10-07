@@ -1,0 +1,5 @@
+# Human approval is required on every PR (Gate 3). Replace with real GitHub teams.
+*                         @wpp-org/<project>-tech-leads
+/.claude/                 @wpp-org/ai-standards
+/.github/                 @wpp-org/ai-standards
+/CLAUDE.md                @wpp-org/<project>-tech-leads @wpp-org/ai-standards

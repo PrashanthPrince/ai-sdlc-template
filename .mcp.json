@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "atlassian": { "type": "http", "url": "https://mcp.atlassian.com/v1/mcp" },
+    "github":    { "type": "http", "url": "https://api.githubcopilot.com/mcp/",
+                   "headers": { "Authorization": "Bearer ${GITHUB_MCP_TOKEN}" } },
+    "figma":     { "type": "http", "url": "http://127.0.0.1:3845/mcp" }
+  }
+}

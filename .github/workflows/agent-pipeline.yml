@@ -1,0 +1,46 @@
+# Runs the right agent when Jira moves a ticket (via Jira Automation -> repository_dispatch)
+# or when a GitHub issue/PR gets an agent label. Humans own every gate; this only does the work.
+name: agent-pipeline
+
+on:
+  repository_dispatch:
+    types: [jira-design, jira-build]
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  design:
+    if: github.event.action == 'jira-design' || github.event.label.name == 'agent:design'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: "/design ${{ github.event.client_payload.issue_key }}"
+          claude_args: "--max-turns 30"
+        env:
+          ATLASSIAN_API_TOKEN: ${{ secrets.ATLASSIAN_API_TOKEN }}
+
+  build:
+    if: github.event.action == 'jira-build' || github.event.label.name == 'agent:build'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: develop }
+      # - add stack setup here (setup-node / setup-php / setup-dotnet / setup-java)
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: "/implement ${{ github.event.client_payload.issue_key }}"
+          claude_args: "--max-turns 60"
+        env:
+          ATLASSIAN_API_TOKEN: ${{ secrets.ATLASSIAN_API_TOKEN }}
