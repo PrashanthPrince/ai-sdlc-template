@@ -3,8 +3,9 @@
 ## Personas
 ## In scope / Out of scope
 ## Functional requirements
-| ID | Requirement | Priority (MoSCoW) | Source |
-## Non-functional requirements (performance, a11y, security, SEO, i18n, hosting)
+| ID | Requirement | Priority (MoSCoW) | Source (file + paragraph/table reference) |
+## Non-functional requirements
+| ID | Category | Requirement | Priority (MoSCoW) | Source (file + paragraph/table reference) |
 ## Integrations
 ## Open questions
-| # | Question | Owner | Due |
+| # | Question | Owner (client, PM, or Tech Lead) | Source (file + paragraph/table reference) | Due |

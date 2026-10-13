@@ -8,7 +8,7 @@ Stack-agnostic core, with adapters for Drupal, SitecoreAI, AEM, Umbraco and MACH
 |---|---|
 | `CLAUDE.md` | Project rules every agent follows. Fill in the PROJECT section. |
 | `.claude/agents/` | 22 subagents, one job each, least-privilege tools |
-| `.claude/commands/` | `/write-stories` `/design` `/implement` `/review` `/release` `/retro` |
+| `.claude/commands/` | `/requirements` `/write-stories` `/design` `/implement` `/review` `/release` `/retro` |
 | `.claude/skills/cms-*` | Stack adapters: conventions, commands, gotchas |
 | `.claude/settings.json` | Allow/deny permissions + hooks |
 | `.claude/hooks/` | Path guard, secret/prod guard, auto-format |
@@ -31,6 +31,14 @@ Stack-agnostic core, with adapters for Drupal, SitecoreAI, AEM, Umbraco and MACH
 ## Setup order
 1. `docs/setup/github-setup.md`  2. `docs/setup/jira-workflow.md`  3. Fill in `CLAUDE.md`, pick the adapter
 4. Replace placeholder CI steps with the adapter's commands  5. `docs/setup/developer-onboarding.md`
+
+## Requirements from meeting transcripts
+Place a manually redacted `.docx` transcript in `docs/inputs/` and run `/requirements docs/inputs/<transcript>.docx`.
+The command extracts paragraph and table text with stable source references and drafts
+`docs/requirements/requirements.md` from `templates/requirements.md`. It asks before replacing
+an existing requirements document. Confirm that the input contains no client PII or secrets
+before processing; the same policy and extraction step are used by `/write-stories`. Input
+DOCX files are ignored by Git and should not be committed.
 
 ## Verify before first use
 Action inputs (`anthropics/claude-code-action@v1`), MCP server URLs and the Figma MCP port can change - check the current docs when you set up.

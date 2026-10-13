@@ -1,0 +1,4 @@
+docs/inputs/*.docx
+docs/inputs/**/*.docx
+__pycache__/
+*.py[cod]

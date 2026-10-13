@@ -12,6 +12,8 @@ from xml.etree import ElementTree
 WORD_NAMESPACE = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 DOCUMENT_XML = "word/document.xml"
 NS = {"w": WORD_NAMESPACE}
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+INPUT_DIRECTORY = (REPOSITORY_ROOT / "docs" / "inputs").resolve()
 
 
 def paragraph_text(paragraph: ElementTree.Element) -> str:
@@ -39,15 +41,23 @@ def paragraph_style(paragraph: ElementTree.Element) -> str | None:
 def extract_document_text(path: Path) -> str:
     if path.suffix.lower() != ".docx":
         raise ValueError(f"Expected a .docx file: {path}")
-    if not path.is_file():
-        raise FileNotFoundError(f"Input file does not exist: {path}")
+    if path.is_absolute():
+        resolved_path = path.resolve()
+    else:
+        resolved_path = (REPOSITORY_ROOT / path).resolve()
+    try:
+        resolved_path.relative_to(INPUT_DIRECTORY)
+    except ValueError as error:
+        raise ValueError(f"Input file must be inside docs/inputs/: {path}") from error
+    if not resolved_path.is_file():
+        raise FileNotFoundError(f"Input file does not exist: {resolved_path}")
 
-    with zipfile.ZipFile(path) as document:
+    with zipfile.ZipFile(resolved_path) as document:
         xml_content = document.read(DOCUMENT_XML)
     root = ElementTree.fromstring(xml_content)
     body = root.find("./w:body", NS)
     if body is None:
-        raise ValueError(f"DOCX document has no body: {path}")
+        raise ValueError(f"DOCX document has no body: {resolved_path}")
 
     lines: list[str] = []
     paragraph_number = 0
@@ -103,7 +113,13 @@ def main() -> int:
 
     try:
         print(extract_document_text(args.docx))
-    except (FileNotFoundError, ValueError, zipfile.BadZipFile, KeyError, ElementTree.ParseError) as error:
+    except (
+        FileNotFoundError,
+        ValueError,
+        zipfile.BadZipFile,
+        KeyError,
+        ElementTree.ParseError,
+    ) as error:
         parser.error(str(error))
     return 0
 
